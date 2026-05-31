@@ -12,11 +12,13 @@ import 'product_detail_screen.dart';
 class ProductListScreen extends StatefulWidget {
   final Category? category;
   final String? searchQuery;
+  final String? title;
 
   const ProductListScreen({
     super.key,
     this.category,
     this.searchQuery,
+    this.title,
   });
 
   @override
@@ -73,7 +75,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.category?.name ?? 'Products',
+          widget.title ?? widget.category?.name ?? 'Products',
           style: AppTextStyles.title,
         ),
         actions: [

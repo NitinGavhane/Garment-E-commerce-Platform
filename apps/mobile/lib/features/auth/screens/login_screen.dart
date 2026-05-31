@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_dimensions.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
-import '../../../mock/mock_data.dart';
+import 'otp_verification_screen.dart';
 import 'register_screen.dart';
-import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,172 +14,129 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
-  void _login() {
+  void _sendOtp() {
     if (_formKey.currentState!.validate()) {
-      final email = _emailController.text.trim().toLowerCase();
-      final password = _passwordController.text;
-
-      final creds = MockData.credentials[email];
-      if (creds == null || creds['password'] != password) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid email or password')),
-        );
-        return;
-      }
-
-      MockData.currentLoggedInUser = MockData.currentUser;
-
-      Navigator.pushReplacementNamed(context, '/main');
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => OtpVerificationScreen(
+            email: _emailController.text.trim(),
+          ),
+        ),
+      );
     }
-  }
-
-  void _goToRegister() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const RegisterScreen()),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppDimensions.lg),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: AppDimensions.xl),
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-                  ),
-                  child: const Icon(
-                    Icons.checkroom_rounded,
-                    color: AppColors.white,
-                    size: 28,
+                const SizedBox(height: 48),
+                Text(
+                  'Nykaa Fashion',
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.nykaaPink,
                   ),
                 ),
-                const SizedBox(height: AppDimensions.lg),
+                const SizedBox(height: 40),
                 Text(
-                  'Welcome back',
-                  style: AppTextStyles.headline1,
+                  'Sign In',
+                  style: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.nykaaBlack,
+                  ),
                 ),
-                const SizedBox(height: AppDimensions.sm),
+                const SizedBox(height: 8),
                 Text(
-                  'Sign in to your account',
-                  style: AppTextStyles.subtitle,
+                  'Enter your email to receive a one-time password',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-                const SizedBox(height: AppDimensions.xxl),
+                const SizedBox(height: 32),
                 AppTextField(
                   controller: _emailController,
-                  hintText: 'Email (e.g. priya.sharma@email.com)',
+                  hintText: 'Email Address',
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: const Icon(Iconsax.sms, size: 20),
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Please enter email' : null,
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!v.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
                 ),
-                const SizedBox(height: AppDimensions.md),
-                AppTextField(
-                  controller: _passwordController,
-                  hintText: 'Password (e.g. user123)',
-                  isPassword: true,
-                  obscure: _obscurePassword,
-                  onTogglePassword: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
-                  prefixIcon: const Icon(Iconsax.lock, size: 20),
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Please enter password' : null,
-                ),
-                const SizedBox(height: AppDimensions.sm),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ForgotPasswordScreen(),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _sendOtp,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.nykaaPink,
+                      foregroundColor: AppColors.white,
+                      elevation: 0,
+                      minimumSize: const Size(double.infinity, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: Text(
-                      'Forgot Password?',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.secondary,
-                        fontWeight: FontWeight.w500,
+                      'Send OTP',
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: AppDimensions.md),
-                AppButton(
-                  label: 'Sign In',
-                  onPressed: _login,
-                ),
-                const SizedBox(height: AppDimensions.lg),
-                Row(
-                  children: [
-                    const Expanded(child: Divider()),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.md),
-                      child: Text(
-                        'or continue with',
-                        style: AppTextStyles.caption,
-                      ),
-                    ),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.lg),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _socialButton(
-                        icon: Icons.g_mobiledata,
-                        label: 'Google',
-                      ),
-                    ),
-                    const SizedBox(width: AppDimensions.md),
-                    Expanded(
-                      child: _socialButton(
-                        icon: Icons.phone_android,
-                        label: 'OTP',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.xxl),
+                const SizedBox(height: 32),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       "Don't have an account? ",
-                      style: AppTextStyles.bodySmall,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                     GestureDetector(
-                      onTap: _goToRegister,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const RegisterScreen(),
+                        ),
+                      ),
                       child: Text(
                         'Sign Up',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.secondary,
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
+                          color: AppColors.nykaaPink,
                         ),
                       ),
                     ),
@@ -192,35 +146,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _socialButton({required IconData icon, required String label}) {
-    return OutlinedButton(
-      onPressed: () {},
-      style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.textPrimary,
-        side: const BorderSide(color: AppColors.border),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 22, color: AppColors.textPrimary),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
       ),
     );
   }

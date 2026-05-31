@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../models/product.dart';
 import '../constants/app_colors.dart';
-import '../constants/app_text_styles.dart';
 
-class ProductCard extends StatefulWidget {
+class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onTap;
   final VoidCallback? onToggleWishlist;
@@ -18,193 +18,125 @@ class ProductCard extends StatefulWidget {
   });
 
   @override
-  State<ProductCard> createState() => _ProductCardState();
-}
-
-class _ProductCardState extends State<ProductCard> {
-  bool _isHovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          transform: _isHovered
-              ? (Matrix4.translationValues(0.0, -4.0, 0.0))
-              : Matrix4.identity(),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: _isHovered
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.network(
+                    product.imageUrl,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: AppColors.nykaaLightPink,
+                      child: Center(
+                        child: Icon(Icons.image,
+                            size: 32,
+                            color: AppColors.nykaaPink.withValues(alpha: 0.4)),
+                      ),
                     ),
-                  ]
-                : null,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 180,
-                child: Stack(
-                  children: [
-                    Container(
+                  ),
+                ),
+                if (product.discountPercentage > 0)
+                  Positioned(
+                    top: 6,
+                    left: 6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
+                        color: AppColors.nykaaPink,
+                        borderRadius: BorderRadius.circular(2),
                       ),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
-                        child: widget.product.imageUrl.isNotEmpty
-                            ? Image.network(
-                                widget.product.imageUrl,
-                                fit: BoxFit.contain,
-                                width: double.infinity,
-                                errorBuilder: (_, __, ___) => _buildPlaceholder(),
-                              )
-                            : _buildPlaceholder(),
-                      ),
-                    ),
-                    if (widget.product.discountPercentage > 0)
-                      Positioned(
-                        top: 10,
-                        left: 10,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.badgeDiscount,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            '-${widget.product.discountPercentage}%',
-                            style: AppTextStyles.badge,
-                          ),
-                        ),
-                      )
-                    else if (widget.product.isNew)
-                      Positioned(
-                        top: 10,
-                        left: 10,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.badgeNew,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            'New',
-                            style: AppTextStyles.badge,
-                          ),
-                        ),
-                      ),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: GestureDetector(
-                        onTap: widget.onToggleWishlist,
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 4,
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            widget.isWishlisted
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            size: 16,
-                            color: widget.isWishlisted
-                                ? AppColors.secondary
-                                : AppColors.textHint,
-                          ),
+                      child: Text(
+                        '${product.discountPercentage}% OFF',
+                        style: GoogleFonts.poppins(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.white,
                         ),
                       ),
                     ),
-                  ],
+                  ),
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: GestureDetector(
+                    onTap: onToggleWishlist,
+                    child: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.92),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isWishlisted ? Icons.favorite : Icons.favorite_border,
+                        size: 14,
+                        color: isWishlisted
+                            ? AppColors.nykaaPink
+                            : AppColors.textHint,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            product.brand,
+            style: GoogleFonts.poppins(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: AppColors.nykaaBlack,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 1),
+          Text(
+            product.title,
+            style: GoogleFonts.poppins(
+              fontSize: 11,
+              color: AppColors.textSecondary,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Text(
+                '\u20B9${product.price.toStringAsFixed(0)}',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.nykaaBlack,
                 ),
               ),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.product.title,
-                      style: AppTextStyles.body.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF333333),
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                          '₹${widget.product.price.toStringAsFixed(0)}',
-                          style: AppTextStyles.priceSmall.copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        if (widget.product.discountPercentage > 0) ...[
-                          const SizedBox(width: 6),
-                          Text(
-                            '₹${widget.product.originalPrice.toStringAsFixed(0)}',
-                            style: AppTextStyles.oldPrice,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
+              if (product.discountPercentage > 0) ...[
+                const SizedBox(width: 4),
+                Text(
+                  '\u20B9${product.originalPrice.toStringAsFixed(0)}',
+                  style: GoogleFonts.poppins(
+                    fontSize: 11,
+                    decoration: TextDecoration.lineThrough,
+                    color: AppColors.textMuted,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPlaceholder() {
-    return Container(
-      color: AppColors.surface,
-      child: Center(
-        child: Icon(
-          Icons.checkroom_rounded,
-          size: 48,
-          color: Colors.grey[300],
-        ),
+        ],
       ),
     );
   }

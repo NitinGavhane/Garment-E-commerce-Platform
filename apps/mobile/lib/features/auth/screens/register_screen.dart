@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_dimensions.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
+import 'otp_verification_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -18,164 +17,150 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
-  void _register() {
+  void _sendOtp() {
     if (_formKey.currentState!.validate()) {
-      Navigator.pushReplacementNamed(context, '/main');
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => OtpVerificationScreen(
+            email: _emailController.text.trim(),
+            fullName: _nameController.text.trim(),
+            phone: _phoneController.text.trim(),
+          ),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
+        titleSpacing: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppDimensions.lg),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 16),
                 Text(
                   'Create Account',
-                  style: AppTextStyles.headline1,
+                  style: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.nykaaBlack,
+                  ),
                 ),
-                const SizedBox(height: AppDimensions.sm),
+                const SizedBox(height: 8),
                 Text(
-                  'Join us and start shopping',
-                  style: AppTextStyles.subtitle,
+                  'Fill in your details to get started',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-                const SizedBox(height: AppDimensions.xxl),
+                const SizedBox(height: 32),
                 AppTextField(
                   controller: _nameController,
                   hintText: 'Full Name',
                   prefixIcon: const Icon(Iconsax.user, size: 20),
                   validator: (v) =>
-                      v == null || v.isEmpty ? 'Please enter name' : null,
+                      v == null || v.trim().isEmpty
+                          ? 'Please enter your name'
+                          : null,
                 ),
-                const SizedBox(height: AppDimensions.md),
+                const SizedBox(height: 16),
                 AppTextField(
                   controller: _emailController,
                   hintText: 'Email Address',
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: const Icon(Iconsax.sms, size: 20),
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Please enter email' : null,
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!v.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
                 ),
-                const SizedBox(height: AppDimensions.md),
+                const SizedBox(height: 16),
                 AppTextField(
                   controller: _phoneController,
                   hintText: 'Phone Number',
                   keyboardType: TextInputType.phone,
                   prefixIcon: const Icon(Iconsax.call, size: 20),
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Please enter phone' : null,
-                ),
-                const SizedBox(height: AppDimensions.md),
-                AppTextField(
-                  controller: _passwordController,
-                  hintText: 'Password',
-                  isPassword: true,
-                  obscure: _obscurePassword,
-                  onTogglePassword: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
-                  prefixIcon: const Icon(Iconsax.lock, size: 20),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Please enter password';
-                    if (v.length < 6) return 'Password must be 6+ characters';
+                    if (v == null || v.trim().isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    if (v.trim().length < 10) {
+                      return 'Please enter a valid phone number';
+                    }
                     return null;
                   },
                 ),
-                const SizedBox(height: AppDimensions.lg),
-                AppButton(
-                  label: 'Create Account',
-                  onPressed: _register,
-                ),
-                const SizedBox(height: AppDimensions.lg),
-                Row(
-                  children: [
-                    const Expanded(child: Divider()),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.md),
-                      child: Text(
-                        'or sign up with',
-                        style: AppTextStyles.caption,
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _sendOtp,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.nykaaPink,
+                      foregroundColor: AppColors.white,
+                      elevation: 0,
+                      minimumSize: const Size(double.infinity, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.lg),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.g_mobiledata, size: 22),
-                        label: const Text('Google'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.textPrimary,
-                          side: const BorderSide(color: AppColors.border),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                AppDimensions.radiusMd),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
+                    child: Text(
+                      'Send OTP',
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(width: AppDimensions.md),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.phone_android, size: 22),
-                        label: const Text('OTP'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.textPrimary,
-                          side: const BorderSide(color: AppColors.border),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                AppDimensions.radiusMd),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: AppDimensions.xl),
+                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'Already have an account? ',
-                      style: AppTextStyles.bodySmall,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Text(
                         'Sign In',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.secondary,
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
+                          color: AppColors.nykaaPink,
                         ),
                       ),
                     ),

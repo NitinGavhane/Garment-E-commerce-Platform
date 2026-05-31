@@ -47,7 +47,7 @@ class AnnouncementBar extends StatelessWidget {
                     TextSpan(
                       text: '₹200',
                       style: AppTextStyles.topBar.copyWith(
-                        color: AppColors.ctaRed,
+                        color: AppColors.ctaPink,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
