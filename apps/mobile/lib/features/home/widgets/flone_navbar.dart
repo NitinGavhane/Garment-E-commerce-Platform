@@ -7,6 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 class FloneNavbar extends StatelessWidget {
   final VoidCallback? onMenuTap;
   final VoidCallback? onSearchTap;
+  final VoidCallback? onShopTap;
   final VoidCallback? onWishlistTap;
   final VoidCallback? onCartTap;
   final VoidCallback? onProfileTap;
@@ -16,6 +17,7 @@ class FloneNavbar extends StatelessWidget {
     super.key,
     this.onMenuTap,
     this.onSearchTap,
+    this.onShopTap,
     this.onWishlistTap,
     this.onCartTap,
     this.onProfileTap,
@@ -41,7 +43,7 @@ class FloneNavbar extends StatelessWidget {
               _Logo(),
               if (!isMobile) ...[
                 const SizedBox(width: 48),
-                Expanded(child: _NavLinks()),
+                Expanded(child: _NavLinks(onShopTap: onShopTap)),
               ],
               const Spacer(),
               _NavIcons(
@@ -77,6 +79,10 @@ class _Logo extends StatelessWidget {
 }
 
 class _NavLinks extends StatelessWidget {
+  final VoidCallback? onShopTap;
+
+  const _NavLinks({this.onShopTap});
+
   @override
   Widget build(BuildContext context) {
     final links = [
@@ -90,6 +96,7 @@ class _NavLinks extends StatelessWidget {
           label: link,
           hasDropdown: hasDropdown,
           isActive: link == 'Home',
+          onTap: link == 'Shop' ? onShopTap : null,
         );
       }).toList(),
     );
@@ -100,11 +107,13 @@ class _NavLink extends StatefulWidget {
   final String label;
   final bool hasDropdown;
   final bool isActive;
+  final VoidCallback? onTap;
 
   const _NavLink({
     required this.label,
     this.hasDropdown = false,
     this.isActive = false,
+    this.onTap,
   });
 
   @override
@@ -119,30 +128,33 @@ class _NavLinkState extends State<_NavLink> {
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              widget.label,
-              style: AppTextStyles.navLink.copyWith(
-                color: widget.isActive
-                    ? AppColors.textPrimary
-                    : _isHovered
-                        ? AppColors.textPrimary
-                        : const Color(0xFF333333),
-                fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w500,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                widget.label,
+                style: AppTextStyles.navLink.copyWith(
+                  color: widget.isActive
+                      ? AppColors.textPrimary
+                      : _isHovered
+                          ? AppColors.textPrimary
+                          : const Color(0xFF333333),
+                  fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w500,
+                ),
               ),
-            ),
-            if (widget.isActive || _isHovered)
-              Container(
-                margin: const EdgeInsets.only(top: 3),
-                height: 2,
-                width: widget.label.length * 7.0,
-                color: AppColors.textPrimary,
-              ),
-          ],
+              if (widget.isActive || _isHovered)
+                Container(
+                  margin: const EdgeInsets.only(top: 3),
+                  height: 2,
+                  width: widget.label.length * 7.0,
+                  color: AppColors.textPrimary,
+                ),
+            ],
+          ),
         ),
       ),
     );

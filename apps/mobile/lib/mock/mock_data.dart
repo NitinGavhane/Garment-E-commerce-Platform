@@ -107,7 +107,7 @@ class MockData {
       isNew: true,
       badge: 'New',
       stock: 45,
-      imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+      imageUrl: 'https://ucarecdn.com/4d83d051-4d53-46ee-921d-91d32181b4b9/bad19c8067196269020513756f8ea6f6.jpg',
     ),
     const Product(
       id: 'p3',
@@ -167,7 +167,7 @@ class MockData {
       isNew: true,
       badge: 'New',
       stock: 60,
-      imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',
+      imageUrl: 'https://ucarecdn.com/544e7841-15db-4ddb-959a-cd6a2c1795da/73ac5af28376d2251fe2b5a13f465b10.jpg',
     ),
     const Product(
       id: 'p6',
@@ -247,7 +247,7 @@ class MockData {
       isNew: true,
       badge: 'Premium',
       stock: 15,
-      imageUrl: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=400',
+      imageUrl: 'https://ucarecdn.com/7939c8cc-682f-4089-8319-ba1cd7e897bb/266c7c985d8219490c106901c5b4d651.jpg',
     ),
     const Product(
       id: 'p10',
@@ -287,7 +287,7 @@ class MockData {
       isNew: true,
       badge: 'New',
       stock: 40,
-      imageUrl: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400',
+      imageUrl: 'https://ucarecdn.com/44c4becb-a254-4d96-8df0-a224a3dd50d5/d05a7742565eadd57378ea6399c61972.jpg',
     ),
     const Product(
       id: 'p12',
@@ -387,7 +387,7 @@ class MockData {
       isNew: true,
       badge: 'Trending',
       stock: 110,
-      imageUrl: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400',
+      imageUrl: 'https://ucarecdn.com/7106a835-3862-4d0b-a890-b7cce6527529/image.png',
     ),
   ];
 

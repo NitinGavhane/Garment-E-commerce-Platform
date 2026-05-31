@@ -49,6 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(builder: (_) => const SearchScreen()),
               ),
+              onShopTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProductListScreen()),
+              ),
               onWishlistTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const WishlistScreen()),
