@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/product_card.dart';
-import '../../../mock/mock_data.dart';
 import '../../../models/product.dart';
+import '../../../providers/product_provider.dart';
+import '../../../providers/category_provider.dart';
 import '../../product/screens/product_detail_screen.dart';
 import '../../product/screens/product_list_screen.dart';
 
@@ -29,6 +31,17 @@ class _SearchScreenState extends State<SearchScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final catProvider = context.read<CategoryProvider>();
+      if (catProvider.categories.isEmpty) {
+        catProvider.fetchCategories();
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -37,12 +50,14 @@ class _SearchScreenState extends State<SearchScreen> {
   void _search(String query) {
     setState(() {
       _hasSearched = true;
-      _results = MockData.searchProducts(query);
+      _results = context.read<ProductProvider>().searchProducts(query);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final categories = context.watch<CategoryProvider>().categories;
+
     return Scaffold(
       appBar: AppBar(
         title: TextField(
@@ -80,10 +95,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       const Icon(Iconsax.search_normal,
                           size: 64, color: AppColors.textHint),
                       const SizedBox(height: 16),
-                      Text(
-                        'No results found',
-                        style: AppTextStyles.subtitle,
-                      ),
+                      Text('No results found',
+                          style: AppTextStyles.subtitle),
                     ],
                   ),
                 )
@@ -143,18 +156,19 @@ class _SearchScreenState extends State<SearchScreen> {
                   Text('Popular Categories',
                       style: AppTextStyles.subtitle),
                   const SizedBox(height: AppDimensions.sm),
-                  ...MockData.categories.take(4).map((cat) => ListTile(
+                  ...categories.take(4).map((cat) {
+                        final c = cat;
+                        return ListTile(
                         leading: Container(
-                          width: 40,
-                          height: 40,
+                          width: 40, height: 40,
                           decoration: BoxDecoration(
-                            color: cat.color.withValues(alpha: 0.1),
+                            color: c.color.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Icon(cat.icon,
-                              color: cat.color, size: 20),
+                          child: Icon(c.icon,
+                              color: c.color, size: 20),
                         ),
-                        title: Text(cat.name,
+                        title: Text(c.name,
                             style: AppTextStyles.body),
                         trailing: const Icon(Icons.chevron_right,
                             color: AppColors.textHint, size: 20),
@@ -163,11 +177,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ProductListScreen(category: cat),
+                              builder: (_) => ProductListScreen(category: c),
                             ),
                           );
                         },
-                      )),
+                      );
+                    }),
                 ],
               ),
             ),

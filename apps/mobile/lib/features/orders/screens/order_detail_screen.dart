@@ -8,17 +8,10 @@ import '../widgets/tracking_timeline.dart';
 import 'order_return_replace_sheet.dart';
 import '../models/order_return_replace_request.dart';
 
-
-
-
-
-
-
 class OrderDetailScreen extends StatelessWidget {
   final Order order;
 
   const OrderDetailScreen({super.key, required this.order});
-
 
   @override
   Widget build(BuildContext context) {

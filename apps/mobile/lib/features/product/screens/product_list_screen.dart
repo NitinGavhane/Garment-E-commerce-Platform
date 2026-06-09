@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/product_card.dart';
-import '../../../mock/mock_data.dart';
 import '../../../models/category.dart';
 import '../../../models/product.dart';
+import '../../../providers/product_provider.dart';
 import 'product_detail_screen.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -28,15 +29,16 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   String? _selectedSize;
   String? _selectedColor;
-  double _maxPrice = 300;
+  double _maxPrice = 30000;
   String _sortBy = 'Popular';
 
   List<Product> get _products {
+    final productProvider = context.read<ProductProvider>();
     var filtered = widget.category != null
-        ? MockData.getProductsByCategory(widget.category!.id)
+        ? productProvider.products
         : widget.searchQuery != null
-            ? MockData.searchProducts(widget.searchQuery!)
-            : MockData.products;
+            ? productProvider.searchProducts(widget.searchQuery!)
+            : productProvider.products;
 
     if (_selectedSize != null) {
       filtered = filtered
@@ -71,6 +73,17 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProductProvider>().fetchProducts(
+        category: widget.category?.id,
+        search: widget.searchQuery,
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -89,74 +102,76 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          if (_products.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.md,
-                vertical: AppDimensions.sm,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${_products.length} products found',
-                    style: AppTextStyles.bodySmall,
-                  ),
-                  Text(
-                    'Sort: $_sortBy',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.secondary,
-                      fontWeight: FontWeight.w500,
+      body: context.watch<ProductProvider>().isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                if (_products.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.md,
+                      vertical: AppDimensions.sm,
                     ),
-                  ),
-                ],
-              ),
-            ),
-          Expanded(
-            child: _products.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Iconsax.box,
-                            size: 64, color: AppColors.textHint),
-                        const SizedBox(height: 16),
                         Text(
-                          'No products found',
-                          style: AppTextStyles.subtitle,
+                          '${_products.length} products found',
+                          style: AppTextStyles.bodySmall,
+                        ),
+                        Text(
+                          'Sort: $_sortBy',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.secondary,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
-                  )
-                : GridView.builder(
-                    padding: const EdgeInsets.all(AppDimensions.md),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.6,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                    ),
-                    itemCount: _products.length,
-                    itemBuilder: (context, index) {
-                      final product = _products[index];
-                      return ProductCard(
-                        product: product,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                ProductDetailScreen(product: product),
-                          ),
-                        ),
-                      );
-                    },
                   ),
-          ),
-        ],
-      ),
+                Expanded(
+                  child: _products.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Iconsax.box,
+                                  size: 64, color: AppColors.textHint),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No products found',
+                                style: AppTextStyles.subtitle,
+                              ),
+                            ],
+                          ),
+                        )
+                      : GridView.builder(
+                          padding: const EdgeInsets.all(AppDimensions.md),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.6,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                          ),
+                          itemCount: _products.length,
+                          itemBuilder: (context, index) {
+                            final product = _products[index];
+                            return ProductCard(
+                              product: product,
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      ProductDetailScreen(product: product),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -231,7 +246,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: MockData.availableSizes.map((s) => FilterChip(
+                children: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'].map((s) => FilterChip(
                   label: Text(s),
                   selected: _selectedSize == s,
                   onSelected: (v) {

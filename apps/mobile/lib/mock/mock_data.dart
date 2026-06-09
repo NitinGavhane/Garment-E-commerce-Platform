@@ -573,7 +573,7 @@ class MockData {
     walletBalance: 250.00,
     referralCode: 'PRIYA250',
     isVerified: true,
-    role: UserRole.user,
+    role: 'customer',
   );
 
   static User? currentLoggedInUser;
@@ -895,19 +895,19 @@ class MockData {
   static List<Map<String, String>> blogPosts = [
     {
       'title': 'How to Style Your Summer Wardrobe for Maximum Comfort',
-      'author': 'Nykaa Fashion',
+      'author': 'Garment',
       'category': 'Lifestyle',
       'imageUrl': 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600',
     },
     {
       'title': '10 Essential Accessories Every Fashionista Needs This Season',
-      'author': 'Nykaa Fashion',
+      'author': 'Garment',
       'category': 'Fashion Tips',
       'imageUrl': 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=600',
     },
     {
       'title': 'Sustainable Fashion: How to Build an Eco-Friendly Closet',
-      'author': 'Nykaa Fashion',
+      'author': 'Garment',
       'category': 'Sustainability',
       'imageUrl': 'https://images.unsplash.com/photo-1479064312651-24524fb55c0e?w=600',
     },

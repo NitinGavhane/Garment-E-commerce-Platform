@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/product_card.dart';
-import '../../../mock/mock_data.dart';
+import '../../../providers/wishlist_provider.dart';
+import '../../../providers/product_provider.dart';
 import '../../product/screens/product_detail_screen.dart';
 
 class WishlistScreen extends StatefulWidget {
@@ -15,19 +17,20 @@ class WishlistScreen extends StatefulWidget {
 }
 
 class _WishlistScreenState extends State<WishlistScreen> {
-  List get _items =>
-      MockData.products.where((p) => MockData.wishlistedIds.contains(p.id)).toList();
-
   @override
   Widget build(BuildContext context) {
+    final wishlist = context.watch<WishlistProvider>();
+    final products = context.watch<ProductProvider>().products;
+    final items = products.where((p) => wishlist.wishlistedIds.contains(p.id)).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Wishlist (${_items.length})',
+          'My Wishlist (${wishlist.count})',
           style: AppTextStyles.title,
         ),
       ),
-      body: _items.isEmpty
+      body: items.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -56,9 +59,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),
-              itemCount: _items.length,
+              itemCount: items.length,
               itemBuilder: (context, index) {
-                final product = _items[index];
+                final product = items[index];
                 return ProductCard(
                   product: product,
                   isWishlisted: true,
@@ -70,9 +73,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                     ),
                   ),
                   onToggleWishlist: () {
-                    setState(() {
-                      MockData.toggleWishlist(product.id);
-                    });
+                    wishlist.toggle(product.id);
                   },
                 );
               },

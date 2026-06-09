@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/app_text_field.dart';
+import '../../../core/widgets/app_button.dart';
+import '../../../providers/auth_provider.dart';
 import 'otp_verification_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -17,24 +20,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _referralController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _passwordController.dispose();
+    _referralController.dispose();
     super.dispose();
   }
 
-  void _sendOtp() {
-    if (_formKey.currentState!.validate()) {
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final auth = context.read<AuthProvider>();
+    final success = await auth.register(
+      fullName: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      phone: _phoneController.text.trim(),
+      password: _passwordController.text,
+      referralCode: _referralController.text.trim(),
+    );
+
+    if (success && mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => OtpVerificationScreen(
             email: _emailController.text.trim(),
-            fullName: _nameController.text.trim(),
-            phone: _phoneController.text.trim(),
           ),
         ),
       );
@@ -83,9 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: 'Full Name',
                   prefixIcon: const Icon(Iconsax.user, size: 20),
                   validator: (v) =>
-                      v == null || v.trim().isEmpty
-                          ? 'Please enter your name'
-                          : null,
+                      v == null || v.trim().isEmpty ? 'Please enter your name' : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
@@ -119,26 +134,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _sendOtp,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.nykaaPink,
-                      foregroundColor: AppColors.white,
-                      elevation: 0,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      'Send OTP',
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
+                const SizedBox(height: 16),
+                AppTextField(
+                  controller: _passwordController,
+                  hintText: 'Password',
+                  isPassword: true,
+                  obscure: _obscurePassword,
+                  prefixIcon: const Icon(Iconsax.lock, size: 20),
+                  onTogglePassword: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
+                      return 'Please enter a password';
+                    }
+                    if (v.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                AppTextField(
+                  controller: _referralController,
+                  hintText: 'Referral Code (Optional)',
+                  prefixIcon: const Icon(Iconsax.share, size: 20),
+                ),
+                const SizedBox(height: 8),
+                Consumer<AuthProvider>(
+                  builder: (_, auth, __) {
+                    if (auth.error != null) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          auth.error!,
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: AppColors.error,
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+                const SizedBox(height: 16),
+                Consumer<AuthProvider>(
+                  builder: (_, auth, __) => SizedBox(
+                    width: double.infinity,
+                    child: AppButton(
+                      label: 'Create Account',
+                      onPressed: _register,
+                      isLoading: auth.isLoading,
                     ),
                   ),
                 ),

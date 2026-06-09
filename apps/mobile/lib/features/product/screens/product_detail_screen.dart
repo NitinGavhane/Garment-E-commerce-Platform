@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../mock/mock_data.dart';
 import '../../../models/product.dart';
+import '../../../providers/cart_provider.dart';
+import '../../../providers/wishlist_provider.dart';
 import '../../checkout/screens/checkout_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -22,7 +24,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String _selectedColor = '';
   final int _quantity = 1;
 
-  bool get _isWishlisted => MockData.wishlistedIds.contains(widget.product.id);
+  bool get _isWishlisted =>
+      context.watch<WishlistProvider>().isWishlisted(widget.product.id);
 
   @override
   void initState() {
@@ -32,8 +35,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   void _addToCart() {
-    MockData.addToCart(
-      widget.product,
+    context.read<CartProvider>().addToCart(
+      product: widget.product,
       quantity: _quantity,
       selectedSize: _selectedSize,
       selectedColor: _selectedColor,
@@ -47,8 +50,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   void _buyNow() {
-    MockData.addToCart(
-      widget.product,
+    context.read<CartProvider>().addToCart(
+      product: widget.product,
       quantity: _quantity,
       selectedSize: _selectedSize,
       selectedColor: _selectedColor,
@@ -100,7 +103,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ),
                   onPressed: () {
-                    setState(() => MockData.toggleWishlist(widget.product.id));
+                    context.read<WishlistProvider>().toggle(widget.product.id);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -457,35 +460,40 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           top: false,
           child: Row(
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.divider,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: IconButton(
-                  icon: Icon(
-                    _isWishlisted ? Iconsax.heart : Iconsax.heart,
-                    size: 22,
-                    color: _isWishlisted
-                        ? AppColors.secondary
-                        : AppColors.textPrimary,
-                  ),
-                  onPressed: () {
-                    setState(() => MockData.toggleWishlist(widget.product.id));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          _isWishlisted
-                              ? 'Removed from wishlist'
-                              : 'Added to wishlist',
-                        ),
-                        duration: const Duration(seconds: 1),
+              Consumer<WishlistProvider>(
+                builder: (_, wishlist, __) {
+                  final isWishlisted = wishlist.isWishlisted(widget.product.id);
+                  return Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: AppColors.divider,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        isWishlisted ? Iconsax.heart : Iconsax.heart,
+                        size: 22,
+                        color: isWishlisted
+                            ? AppColors.secondary
+                            : AppColors.textPrimary,
                       ),
-                    );
-                  },
-                ),
+                      onPressed: () {
+                        wishlist.toggle(widget.product.id);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              isWishlisted
+                                  ? 'Removed from wishlist'
+                                  : 'Added to wishlist',
+                            ),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 12),
               Expanded(

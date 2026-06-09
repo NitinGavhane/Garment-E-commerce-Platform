@@ -18,16 +18,16 @@ class BrandSpotlight extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
           child: Row(
             children: [
               Expanded(
                 child: Text(
                   'In The Spotlight',
                   style: GoogleFonts.poppins(
-                    fontSize: 17,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.nykaaBlack,
+                    color: AppColors.brandDark,
                   ),
                 ),
               ),
@@ -42,7 +42,7 @@ class BrandSpotlight extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 260,
+          height: 250,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -53,35 +53,29 @@ class BrandSpotlight extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onBrandTap?.call(brand),
                 child: Container(
-                  width: 180,
+                  width: 170,
                   decoration: BoxDecoration(
                     color: AppColors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ClipRRect(
                         borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
                         ),
                         child: Image.network(
                           brand['imageUrl'] ?? '',
-                          height: 140,
+                          height: 130,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
-                            height: 140,
-                            color: AppColors.nykaaLightPink,
-                            child: const Icon(Icons.store, color: AppColors.nykaaPink, size: 36),
+                            height: 130,
+                            color: AppColors.primaryLight,
+                            child: Icon(Icons.store, color: AppColors.primary, size: 32),
                           ),
                         ),
                       ),
@@ -94,8 +88,8 @@ class BrandSpotlight extends StatelessWidget {
                               brand['offer'] ?? '',
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.nykaaPink,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -104,7 +98,7 @@ class BrandSpotlight extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.nykaaBlack,
+                                color: AppColors.brandDark,
                               ),
                             ),
                             const SizedBox(height: 2),

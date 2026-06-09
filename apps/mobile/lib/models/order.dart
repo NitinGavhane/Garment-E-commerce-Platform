@@ -2,7 +2,6 @@ import 'product.dart';
 import 'address.dart';
 import '../features/orders/models/order_return_replace_request.dart';
 
-
 enum OrderStatus {
   placed,
   confirmed,
@@ -86,7 +85,6 @@ class Order {
   final DateTime createdAt;
   final DateTime estimatedDelivery;
   final String? trackingId;
-
   final List<OrderReturnReplaceRequest> returnReplaceRequests;
 
   const Order({
@@ -109,4 +107,3 @@ class Order {
 
   bool get isReturnReplaceEligible => status == OrderStatus.delivered;
 }
-

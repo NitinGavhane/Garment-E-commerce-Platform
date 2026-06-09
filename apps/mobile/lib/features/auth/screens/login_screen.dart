@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/app_text_field.dart';
-import 'otp_verification_screen.dart';
+import '../../../core/widgets/app_button.dart';
+import '../../../providers/auth_provider.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -14,25 +16,27 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
     _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  void _sendOtp() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => OtpVerificationScreen(
-            email: _emailController.text.trim(),
-          ),
-        ),
-      );
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+    final auth = context.read<AuthProvider>();
+    final success = await auth.login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+    if (success && mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
     }
   }
 
@@ -50,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 48),
                 Text(
-                  'Nykaa Fashion',
+                  'Garment',
                   style: GoogleFonts.poppins(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -68,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Enter your email to receive a one-time password',
+                  'Enter your credentials to continue',
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     color: AppColors.textSecondary,
@@ -90,30 +94,55 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _sendOtp,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.nykaaPink,
-                      foregroundColor: AppColors.white,
-                      elevation: 0,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      'Send OTP',
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
+                const SizedBox(height: 16),
+                AppTextField(
+                  controller: _passwordController,
+                  hintText: 'Password',
+                  isPassword: true,
+                  obscure: _obscurePassword,
+                  prefixIcon: const Icon(Iconsax.lock, size: 20),
+                  onTogglePassword: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
+                      return 'Please enter your password';
+                    }
+                    if (v.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 8),
+                Consumer<AuthProvider>(
+                  builder: (_, auth, __) {
+                    if (auth.error != null) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          auth.error!,
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: AppColors.error,
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+                const SizedBox(height: 16),
+                Consumer<AuthProvider>(
+                  builder: (_, auth, __) => SizedBox(
+                    width: double.infinity,
+                    child: AppButton(
+                      label: 'Sign In',
+                      onPressed: _login,
+                      isLoading: auth.isLoading,
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

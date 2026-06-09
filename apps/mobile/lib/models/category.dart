@@ -15,3 +15,35 @@ class Category {
     this.productCount = 0,
   });
 }
+
+class ApiCategory {
+  final String id;
+  final String name;
+  final String slug;
+  final String? description;
+  final String? imageUrl;
+  final bool isActive;
+  final DateTime createdAt;
+
+  const ApiCategory({
+    required this.id,
+    required this.name,
+    required this.slug,
+    this.description,
+    this.imageUrl,
+    this.isActive = true,
+    required this.createdAt,
+  });
+
+  factory ApiCategory.fromJson(Map<String, dynamic> json) {
+    return ApiCategory(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      slug: json['slug'] as String,
+      description: json['description'] as String?,
+      imageUrl: json['image_url'] as String?,
+      isActive: json['is_active'] as bool? ?? true,
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+}

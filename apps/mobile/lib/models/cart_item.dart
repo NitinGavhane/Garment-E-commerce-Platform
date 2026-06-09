@@ -33,3 +33,56 @@ class CartItem {
     );
   }
 }
+
+class ApiCartItem {
+  final String id;
+  final String productId;
+  final String? productTitle;
+  final String? variantId;
+  final String? variantInfo;
+  int quantity;
+  final double? price;
+  final String? imageUrl;
+
+  ApiCartItem({
+    required this.id,
+    required this.productId,
+    this.productTitle,
+    this.variantId,
+    this.variantInfo,
+    required this.quantity,
+    this.price,
+    this.imageUrl,
+  });
+
+  double get totalPrice => (price ?? 0) * quantity;
+
+  factory ApiCartItem.fromJson(Map<String, dynamic> json) {
+    return ApiCartItem(
+      id: json['id'] as String,
+      productId: json['product_id'] as String,
+      productTitle: json['product_title'] as String?,
+      variantId: json['variant_id'] as String?,
+      variantInfo: json['variant_info'] as String?,
+      quantity: json['quantity'] as int,
+      price: (json['price'] as num?)?.toDouble(),
+      imageUrl: json['image_url'] as String?,
+    );
+  }
+}
+
+class ApiCartResponse {
+  final List<ApiCartItem> items;
+  final double total;
+
+  const ApiCartResponse({required this.items, required this.total});
+
+  factory ApiCartResponse.fromJson(Map<String, dynamic> json) {
+    return ApiCartResponse(
+      items: (json['items'] as List<dynamic>)
+          .map((i) => ApiCartItem.fromJson(i as Map<String, dynamic>))
+          .toList(),
+      total: (json['total'] as num).toDouble(),
+    );
+  }
+}

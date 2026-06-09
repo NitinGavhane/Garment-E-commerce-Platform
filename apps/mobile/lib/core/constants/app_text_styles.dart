@@ -7,14 +7,14 @@ class AppTextStyles {
 
   static TextStyle get displayLarge => GoogleFonts.poppins(
         fontSize: 32,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w800,
         color: AppColors.textPrimary,
         letterSpacing: -0.5,
       );
 
   static TextStyle get displayMedium => GoogleFonts.poppins(
         fontSize: 28,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w800,
         color: AppColors.textPrimary,
         letterSpacing: -0.5,
       );
@@ -91,7 +91,7 @@ class AppTextStyles {
   static TextStyle get price => GoogleFonts.poppins(
         fontSize: 16,
         fontWeight: FontWeight.w700,
-        color: AppColors.secondary,
+        color: AppColors.primary,
       );
 
   static TextStyle get priceSmall => GoogleFonts.poppins(
@@ -114,11 +114,74 @@ class AppTextStyles {
         letterSpacing: 0.5,
       );
 
-  static TextStyle get heroTitle => GoogleFonts.poppins(
-        fontSize: 52,
-        fontWeight: FontWeight.w300,
+  static TextStyle get saleHeading => GoogleFonts.poppins(
+        fontSize: 30,
+        fontWeight: FontWeight.w800,
+        color: AppColors.white,
+        letterSpacing: 1,
+      );
+
+  static TextStyle get sectionLabel => GoogleFonts.poppins(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
-        letterSpacing: -1,
+      );
+
+  static TextStyle get searchPlaceholder => GoogleFonts.poppins(
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textHint,
+      );
+
+  static TextStyle get tabLabel => GoogleFonts.poppins(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textSecondary,
+        letterSpacing: 0.5,
+      );
+
+  static TextStyle get tabLabelActive => GoogleFonts.poppins(
+        fontSize: 13,
+        fontWeight: FontWeight.w700,
+        color: AppColors.brandDark,
+        letterSpacing: 0.5,
+      );
+
+  static TextStyle get brandName => GoogleFonts.poppins(
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+        color: AppColors.white,
+      );
+
+  static TextStyle get smallBody => GoogleFonts.poppins(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textSecondary,
+      );
+
+  static TextStyle get navLabel => GoogleFonts.poppins(
+        fontSize: 10,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textSecondary,
+      );
+
+  static TextStyle get navLabelActive => GoogleFonts.poppins(
+        fontSize: 10,
+        fontWeight: FontWeight.w700,
+        color: AppColors.primary,
+      );
+
+  static TextStyle get topBar => GoogleFonts.poppins(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: Color(0xFF555555),
+      );
+
+  static TextStyle get ctaButton => GoogleFonts.poppins(
+        fontSize: 13,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textPrimary,
+        letterSpacing: 2,
       );
 
   static TextStyle get sectionHeading => GoogleFonts.poppins(
@@ -133,16 +196,17 @@ class AppTextStyles {
         color: AppColors.textMuted,
       );
 
-  static TextStyle get navLink => GoogleFonts.poppins(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: Color(0xFF333333),
+  static TextStyle get blogTitle => GoogleFonts.poppins(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
       );
 
-  static TextStyle get topBar => GoogleFonts.poppins(
+  static TextStyle get blogAuthor => GoogleFonts.poppins(
         fontSize: 12,
         fontWeight: FontWeight.w400,
-        color: Color(0xFF555555),
+        fontStyle: FontStyle.italic,
+        color: AppColors.textSecondary,
       );
 
   static TextStyle get footerHeading => GoogleFonts.poppins(
@@ -159,23 +223,16 @@ class AppTextStyles {
         height: 2,
       );
 
-  static TextStyle get ctaButton => GoogleFonts.poppins(
-        fontSize: 13,
-        fontWeight: FontWeight.bold,
+  static TextStyle get heroTitle => GoogleFonts.poppins(
+        fontSize: 52,
+        fontWeight: FontWeight.w300,
         color: AppColors.textPrimary,
-        letterSpacing: 2,
+        letterSpacing: -1,
       );
 
-  static TextStyle get blogTitle => GoogleFonts.poppins(
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      );
-
-  static TextStyle get blogAuthor => GoogleFonts.poppins(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.italic,
-        color: AppColors.textSecondary,
+  static TextStyle get navLink => GoogleFonts.poppins(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF333333),
       );
 }

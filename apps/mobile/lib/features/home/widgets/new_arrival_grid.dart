@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/widgets/product_card.dart';
-import '../../../mock/mock_data.dart';
+import '../../../providers/product_provider.dart';
+import '../../../providers/wishlist_provider.dart';
 import '../../product/screens/product_detail_screen.dart';
 import 'section_header.dart';
 
@@ -12,7 +14,7 @@ class NewArrivalGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final products = MockData.newProducts.take(8).toList();
+    final products = context.watch<ProductProvider>().newProducts.take(8).toList();
     if (products.isEmpty) return const SizedBox.shrink();
 
     return Container(
@@ -53,7 +55,7 @@ class NewArrivalGrid extends StatelessWidget {
                 itemCount: products.length,
                 itemBuilder: (context, index) {
                   final product = products[index];
-                  final isWishlisted = MockData.wishlistedIds.contains(product.id);
+                  final isWishlisted = context.watch<WishlistProvider>().isWishlisted(product.id);
                   return ProductCard(
                     product: product,
                     isWishlisted: isWishlisted,
@@ -64,7 +66,7 @@ class NewArrivalGrid extends StatelessWidget {
                       ),
                     ),
                     onToggleWishlist: () {
-                      MockData.toggleWishlist(product.id);
+                      context.read<WishlistProvider>().toggle(product.id);
                       onWishlistChanged?.call();
                     },
                   );

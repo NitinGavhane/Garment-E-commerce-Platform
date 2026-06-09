@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../mock/mock_data.dart';
 import '../../../models/cart_item.dart';
+import '../../../providers/cart_provider.dart';
 import '../../checkout/screens/checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -17,38 +18,21 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  double get _subtotal =>
-      MockData.cartItems.fold(0, (sum, item) => sum + item.totalPrice);
-
-  double get _shipping => _subtotal > 100 ? 0 : 9.99;
-
-  double get _total => _subtotal + _shipping;
-
-  void _updateQuantity(int index, int delta) {
-    setState(() {
-      final newQty = MockData.cartItems[index].quantity + delta;
-      if (newQty > 0) {
-        MockData.cartItems[index].quantity = newQty;
-      } else {
-        MockData.cartItems.removeAt(index);
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final cart = context.watch<CartProvider>();
+    final items = cart.items;
+    final subtotal = cart.subtotal;
+    final shipping = subtotal > 100 ? 0 : 9.99;
+    final total = subtotal + shipping;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Cart (${MockData.cartItems.length})',
+          'My Cart (${cart.count})',
           style: AppTextStyles.title,
         ),
       ),
-      body: MockData.cartItems.isEmpty
+      body: items.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -73,16 +57,18 @@ class _CartScreenState extends State<CartScreen> {
                 Expanded(
                   child: ListView.separated(
                     padding: const EdgeInsets.all(AppDimensions.md),
-                    itemCount: MockData.cartItems.length,
+                    itemCount: items.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      final item = MockData.cartItems[index];
+                      final item = items[index];
                       return _CartItemCard(
                         item: item,
-                        onIncrement: () => _updateQuantity(index, 1),
-                        onDecrement: () => _updateQuantity(index, -1),
+                        onIncrement: () =>
+                            context.read<CartProvider>().updateQuantity(index, 1),
+                        onDecrement: () =>
+                            context.read<CartProvider>().updateQuantity(index, -1),
                         onRemove: () =>
-                            setState(() => MockData.cartItems.removeAt(index)),
+                            context.read<CartProvider>().removeItem(index),
                       );
                     },
                   ),
@@ -108,7 +94,7 @@ class _CartScreenState extends State<CartScreen> {
                           children: [
                             Text('Subtotal',
                                 style: AppTextStyles.body),
-                            Text('₹${_subtotal.toStringAsFixed(2)}',
+                            Text('₹${subtotal.toStringAsFixed(2)}',
                                 style: AppTextStyles.subtitle),
                           ],
                         ),
@@ -119,11 +105,11 @@ class _CartScreenState extends State<CartScreen> {
                             Text('Shipping',
                                 style: AppTextStyles.bodySmall),
                             Text(
-                              _shipping == 0
+                              shipping == 0
                                   ? 'FREE'
-                                  : '₹${_shipping.toStringAsFixed(2)}',
+                                  : '₹${shipping.toStringAsFixed(2)}',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: _shipping == 0
+                                color: shipping == 0
                                     ? AppColors.success
                                     : AppColors.textSecondary,
                               ),
@@ -139,7 +125,7 @@ class _CartScreenState extends State<CartScreen> {
                               style: AppTextStyles.title,
                             ),
                             Text(
-                              '₹${_total.toStringAsFixed(2)}',
+                              '₹${total.toStringAsFixed(2)}',
                               style: AppTextStyles.headline3.copyWith(
                                 color: AppColors.secondary,
                               ),
@@ -148,7 +134,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                         const SizedBox(height: AppDimensions.md),
                         AppButton(
-                          label: 'Checkout • \$${_total.toStringAsFixed(2)}',
+                          label: 'Checkout • ₹${total.toStringAsFixed(2)}',
                           onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../mock/mock_data.dart';
+import '../../../core/services/order_api_service.dart';
+import '../../../core/services/cart_api_service.dart';
+import '../../../core/services/api_client.dart';
+import '../../../providers/cart_provider.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../models/address.dart';
-import '../../../models/order.dart';
+import '../../../mock/mock_data.dart';
+import '../../payment/screens/payment_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -18,6 +24,8 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   Address? _selectedAddress;
   String _selectedPayment = 'Google Pay';
+  bool _isPlacing = false;
+  String? _error;
 
   @override
   void initState() {
@@ -28,10 +36,63 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  Future<void> _placeOrder() async {
+    final auth = context.read<AuthProvider>();
+    if (!auth.isLoggedIn) {
+      Navigator.pushNamed(context, '/login');
+      return;
+    }
+
+    setState(() {
+      _isPlacing = true;
+      _error = null;
+    });
+
+    try {
+      final cart = context.read<CartProvider>();
+      final items = cart.items.map((ci) => {
+        'product_id': ci.product.id,
+        'variant_id': null,
+        'quantity': ci.quantity,
+      }).toList();
+
+      final orderResult = await OrderApiService.createOrder(
+        shippingAddress: _selectedAddress?.toString() ?? '',
+        items: items,
+      );
+
+      final orderId = orderResult['id'] as String;
+      final amount = (orderResult['final_amount'] as num).toDouble();
+
+      await CartApiService.getCart();
+
+      if (!mounted) return;
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentScreen(
+            orderId: orderId,
+            amount: amount,
+          ),
+        ),
+      );
+
+      cart.clear();
+      if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
+    } on ApiException catch (e) {
+      setState(() => _error = e.message);
+    } catch (e) {
+      setState(() => _error = 'Failed to place order. Please try again.');
+    } finally {
+      if (mounted) setState(() => _isPlacing = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final subtotal = MockData.cartItems.fold<double>(
-        0, (sum, item) => sum + item.totalPrice);
+    final cart = context.watch<CartProvider>();
+    final subtotal = cart.subtotal;
     final shipping = subtotal > 100 ? 0.0 : 9.99;
     final total = subtotal + shipping;
 
@@ -56,8 +117,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 child: Row(
                   children: [
                     Container(
-                      width: 44,
-                      height: 44,
+                      width: 44, height: 44,
                       decoration: BoxDecoration(
                         color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -73,16 +133,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           Text(
                             '${_selectedAddress!.fullName} • ${_selectedAddress!.type}',
                             style: AppTextStyles.subtitle.copyWith(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
+                              fontWeight: FontWeight.w500, fontSize: 13,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             '${_selectedAddress!.street}, ${_selectedAddress!.city}, ${_selectedAddress!.state} - ${_selectedAddress!.pincode}',
                             style: AppTextStyles.caption.copyWith(
-                              color: AppColors.textSecondary,
-                              fontSize: 11,
+                              color: AppColors.textSecondary, fontSize: 11,
                             ),
                           ),
                         ],
@@ -115,13 +173,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             child: Column(
               children: [
-                ...MockData.cartItems.map((item) => Padding(
+                ...cart.items.map((item) => Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Row(
                         children: [
                           Container(
-                            width: 44,
-                            height: 56,
+                            width: 44, height: 56,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: item.product.gradientColors,
@@ -166,45 +223,58 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ],
             ),
           ),
-          const SizedBox(height: AppDimensions.xl),
-          if (MockData.currentLoggedInUser == null)
-            Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.warning.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Iconsax.info_circle,
-                          color: AppColors.warning, size: 20),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Please sign in to place your order',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.warning,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.md),
-                AppButton(
-                  label: 'Sign In to Continue',
-                  onPressed: () => Navigator.pushNamed(context, '/login'),
-                ),
-              ],
-            )
-          else
-            AppButton(
-              label: 'Place Order • \$${total.toStringAsFixed(2)}',
-              onPressed: () => _showOrderPlaced(context),
+          if (_error != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                _error!,
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.error),
+              ),
             ),
+          const SizedBox(height: AppDimensions.xl),
+          Consumer<AuthProvider>(
+            builder: (_, auth, __) {
+              if (!auth.isLoggedIn) {
+                return Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.warning.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Iconsax.info_circle,
+                              color: AppColors.warning, size: 20),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Please sign in to place your order',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.warning,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.md),
+                    AppButton(
+                      label: 'Sign In to Continue',
+                      onPressed: () => Navigator.pushNamed(context, '/login'),
+                    ),
+                  ],
+                );
+              }
+              return AppButton(
+                label: 'Place Order • ₹${total.toStringAsFixed(2)}',
+                onPressed: _placeOrder,
+                isLoading: _isPlacing,
+              );
+            },
+          ),
           const SizedBox(height: AppDimensions.lg),
         ],
       ),
@@ -240,8 +310,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           style: AppTextStyles.caption),
                       activeColor: AppColors.primary,
                       contentPadding: EdgeInsets.zero,
-                    ))
-                ,
+                    )),
             const SizedBox(height: AppDimensions.md),
             OutlinedButton.icon(
               onPressed: () => Navigator.pop(ctx),
@@ -256,107 +325,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  void _createOrder() {
-    final orderId = 'ord${MockData.orders.length + 5}';
-    final orderNum = 'ORD-2026-${(100 + MockData.orders.length + 1).toString().padLeft(3, '0')}';
-    final items = MockData.cartItems.map((ci) => OrderItem(
-      id: 'oi_${ci.id}',
-      product: ci.product,
-      quantity: ci.quantity,
-      price: ci.product.price,
-      size: ci.selectedSize,
-      color: ci.selectedColor,
-    )).toList();
-    final subtotal = items.fold<double>(0, (s, i) => s + i.price * i.quantity);
-    final shipping = subtotal > 100 ? 0.0 : 9.99;
-    final total = subtotal + shipping;
-
-    MockData.orders.insert(0, Order(
-      id: orderId,
-      orderNumber: orderNum,
-      items: items,
-      subtotal: subtotal,
-      shipping: shipping,
-      discount: 0,
-      gst: total * 0.12,
-      total: total + total * 0.12,
-      status: OrderStatus.placed,
-      address: _selectedAddress ?? MockData.addresses.first,
-      paymentMethod: _selectedPayment,
-      createdAt: DateTime.now(),
-      estimatedDelivery: DateTime.now().add(const Duration(days: 5)),
-      trackingId: 'TRK${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}',
-    ));
-    MockData.cartItems.clear();
-  }
-
-  void _showOrderPlaced(BuildContext context) {
-    _createOrder();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        padding: const EdgeInsets.all(AppDimensions.lg),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.check,
-                    color: AppColors.success, size: 28),
-              ),
-              const SizedBox(height: AppDimensions.md),
-              Text(
-                'Order Placed Successfully!',
-                style: AppTextStyles.headline3,
-              ),
-              const SizedBox(height: AppDimensions.sm),
-              Text(
-                'Your order will be delivered by ${DateTime.now().add(const Duration(days: 5)).toString().split(' ')[0]}',
-                style: AppTextStyles.bodySmall,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppDimensions.xl),
-              AppButton(
-                label: 'Track Order',
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  Navigator.pushReplacementNamed(context, '/main');
-                },
-              ),
-              const SizedBox(height: AppDimensions.sm),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  Navigator.pushReplacementNamed(context, '/main');
-                },
-                child: Text(
-                  'Continue Shopping',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -378,19 +346,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: isTotal
-                ? AppTextStyles.title
-                : AppTextStyles.bodySmall,
-          ),
-          Text(
-            value,
-            style: isTotal
-                ? AppTextStyles.headline3.copyWith(
-                    color: AppColors.secondary, fontSize: 18)
-                : AppTextStyles.body,
-          ),
+          Text(label,
+              style: isTotal ? AppTextStyles.title : AppTextStyles.bodySmall),
+          Text(value,
+              style: isTotal
+                  ? AppTextStyles.headline3.copyWith(
+                      color: AppColors.secondary, fontSize: 18)
+                  : AppTextStyles.body),
         ],
       ),
     );
@@ -405,11 +367,8 @@ class _PaymentMethodTile extends StatelessWidget {
   final VoidCallback onTap;
 
   const _PaymentMethodTile({
-    required this.name,
-    required this.icon,
-    required this.isPopular,
-    required this.isSelected,
-    required this.onTap,
+    required this.name, required this.icon, required this.isPopular,
+    required this.isSelected, required this.onTap,
   });
 
   @override
@@ -434,13 +393,10 @@ class _PaymentMethodTile extends StatelessWidget {
             Icon(icon, size: 24,
                 color: isSelected ? AppColors.primary : AppColors.textHint),
             const SizedBox(width: 12),
-            Expanded(
-              child: Text(name, style: AppTextStyles.body),
-            ),
+            Expanded(child: Text(name, style: AppTextStyles.body)),
             if (isPopular)
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),

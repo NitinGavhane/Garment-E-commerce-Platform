@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../mock/mock_data.dart';
+import '../../../providers/auth_provider.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String email;
@@ -28,13 +29,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final List<String> _prevValues = List.generate(6, (_) => '');
   int _timerSeconds = 30;
   bool _canResend = false;
-  bool _isVerifying = false;
 
   @override
   void initState() {
     super.initState();
     _startTimer();
-    MockData.sendOtp(widget.email);
   }
 
   @override
@@ -82,21 +81,20 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       _showSnack('Please enter the full 6-digit OTP');
       return;
     }
-    setState(() => _isVerifying = true);
 
-    final isValid = MockData.verifyOtp(widget.email, _otp);
-    await Future.delayed(const Duration(milliseconds: 600));
+    final auth = context.read<AuthProvider>();
+    final success = await auth.verifyOtp(
+      email: widget.email,
+      otp: _otp,
+    );
 
     if (!mounted) return;
-    setState(() => _isVerifying = false);
 
-    if (isValid) {
-      MockData.currentLoggedInUser = MockData.currentUser;
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
-      }
+    if (success) {
+      _showSnack('Email verified successfully! Please sign in.');
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
     } else {
-      _showSnack('Invalid OTP. Please try again.');
+      _showSnack(auth.error ?? 'Invalid OTP. Please try again.');
       for (var c in _otpControllers) {
         c.clear();
       }
@@ -105,7 +103,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   void _resendOtp() {
-    MockData.sendOtp(widget.email);
     _startTimer();
     for (var c in _otpControllers) {
       c.clear();
@@ -210,12 +207,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: AppButton(
-                  label: 'Verify',
-                  onPressed: _verifyOtp,
-                  isLoading: _isVerifying,
+              Consumer<AuthProvider>(
+                builder: (_, auth, __) => SizedBox(
+                  width: double.infinity,
+                  child: AppButton(
+                    label: 'Verify',
+                    onPressed: _verifyOtp,
+                    isLoading: auth.isLoading,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -225,7 +224,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   children: [
                     Text(
                       _canResend
-                          ? 'Didn\'t receive the code? '
+                          ? "Didn't receive the code? "
                           : 'Resend code in ${_timerSeconds}s',
                       style: GoogleFonts.poppins(
                         fontSize: 13,
