@@ -29,7 +29,7 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   String? _selectedSize;
   String? _selectedColor;
-  double _maxPrice = 30000;
+  double _maxPrice = 5000;
   String _sortBy = 'Popular';
 
   List<Product> get _products {
@@ -230,7 +230,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       setState(() {
                         _selectedSize = null;
                         _selectedColor = null;
-                        _maxPrice = 300;
+                        _maxPrice = 5000;
                       });
                       Navigator.pop(ctx);
                     },
@@ -261,7 +261,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               Slider(
                 value: _maxPrice,
                 min: 0,
-                max: 500,
+                max: 5000,
                 activeColor: AppColors.primary,
                 onChanged: (v) {
                   setSheetState(() => _maxPrice = v);

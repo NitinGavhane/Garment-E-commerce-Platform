@@ -35,7 +35,7 @@ class ProductProvider extends ChangeNotifier {
           description: '',
           brand: '',
           category: apiProduct.categoryName ?? '',
-          categoryId: '',
+          categoryId: apiProduct.categoryId ?? '',
           price: apiProduct.displayPrice,
           originalPrice: apiProduct.price,
           discountPercentage: apiProduct.discountPrice != null

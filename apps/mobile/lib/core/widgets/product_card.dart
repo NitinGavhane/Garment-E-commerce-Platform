@@ -115,22 +115,28 @@ class ProductCard extends StatelessWidget {
           const SizedBox(height: 4),
           Row(
             children: [
-              Text(
-                '\u20B9${product.price.toStringAsFixed(0)}',
-                style: GoogleFonts.poppins(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.nykaaBlack,
+              Flexible(
+                child: Text(
+                  '\u20B9${product.price.toStringAsFixed(0)}',
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.nykaaBlack,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               if (product.discountPercentage > 0) ...[
                 const SizedBox(width: 4),
-                Text(
-                  '\u20B9${product.originalPrice.toStringAsFixed(0)}',
-                  style: GoogleFonts.poppins(
-                    fontSize: 11,
-                    decoration: TextDecoration.lineThrough,
-                    color: AppColors.textMuted,
+                Flexible(
+                  child: Text(
+                    '\u20B9${product.originalPrice.toStringAsFixed(0)}',
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      decoration: TextDecoration.lineThrough,
+                      color: AppColors.textMuted,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

@@ -59,6 +59,7 @@ class CategoryProvider extends ChangeNotifier {
           name: apiCat.name,
           icon: _categoryIcons[idx],
           color: _categoryColors[idx],
+          imageUrl: apiCat.imageUrl,
         );
       }).toList();
       _error = null;

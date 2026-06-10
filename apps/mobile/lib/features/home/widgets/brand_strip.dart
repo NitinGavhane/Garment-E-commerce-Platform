@@ -7,136 +7,116 @@ class BrandStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _PoweredByStrip(),
-        const SizedBox(height: 1),
-        _BrandPartnersStrip(),
-      ],
+    return Container(
+      color: AppColors.surface,
+      child: Column(
+        children: [
+          const SizedBox(height: 8),
+          _PrimaryStrip(),
+          _SecondaryStrip(),
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 }
 
-class _PoweredByStrip extends StatelessWidget {
+class _PrimaryStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 48,
+      height: 44,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFFFF6B00), Color(0xFFCC0000)],
+          colors: [Color(0xFFbd003b), Color(0xFFe8144d)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
-          Text(
-            'POWERED BY',
-            style: GoogleFonts.poppins(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: Colors.white70,
-              letterSpacing: 1,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _BrandTag(label: 'Libas', showArrow: true),
-                _BrandTag(label: 'Rare Rabbit', showArrow: true),
-              ],
-            ),
-          ),
+          _BrandItem('LIBAS'),
+          _BrandItem('RARE RABBIT'),
+          _BrandItem('LIBAS'),
         ],
       ),
     );
   }
 }
 
-class _BrandPartnersStrip extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      color: AppColors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        children: [
-          _BrandChip(label: 'MIRAGGIO'),
-          const SizedBox(width: 8),
-          _BrandChip(label: 'JACK&JONES'),
-          const SizedBox(width: 8),
-          _BrandChip(label: 'TIMEX'),
-          const Spacer(),
-          Text(
-            '›',
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w300,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+class _BrandItem extends StatelessWidget {
+  final String name;
 
-class _BrandTag extends StatelessWidget {
-  final String label;
-  final bool showArrow;
-
-  const _BrandTag({required this.label, this.showArrow = false});
+  const _BrandItem(this.name);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            label,
+            name,
             style: GoogleFonts.poppins(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: AppColors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: Colors.white.withValues(alpha: 0.9),
+              letterSpacing: 1,
             ),
           ),
-          if (showArrow) ...[
-            const SizedBox(width: 4),
-            Icon(Icons.arrow_forward_ios, size: 10, color: AppColors.white.withValues(alpha: 0.7)),
-          ],
+          const SizedBox(width: 20),
+          Container(width: 1, height: 16, color: Colors.white.withValues(alpha: 0.3)),
         ],
       ),
     );
   }
 }
 
-class _BrandChip extends StatelessWidget {
-  final String label;
-
-  const _BrandChip({required this.label});
-
+class _SecondaryStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(16),
+      height: 40,
+      color: AppColors.surfaceContainer,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          _SecondaryBrand('Miraggio'),
+          _SecondaryBrand('Jack & Jones'),
+          _SecondaryBrand('Timex'),
+          _SecondaryBrand('Miraggio'),
+        ],
       ),
-      child: Text(
-        label,
-        style: GoogleFonts.poppins(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: AppColors.brandDark,
-        ),
+    );
+  }
+}
+
+class _SecondaryBrand extends StatelessWidget {
+  final String name;
+
+  const _SecondaryBrand(this.name);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      child: Row(
+        children: [
+          Text(
+            name,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.onSurfaceVariant,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(width: 18),
+          Container(width: 1, height: 12, color: AppColors.outlineVariant),
+        ],
       ),
     );
   }

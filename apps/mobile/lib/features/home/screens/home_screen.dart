@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/product_grid_section.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/category_provider.dart';
 import '../../../providers/product_provider.dart';
-import '../../../mock/mock_data.dart';
 import '../widgets/top_bar.dart';
 import '../widgets/gender_filter_tabs.dart';
-import '../widgets/category_icons_grid.dart';
-import '../widgets/banner_carousel.dart';
+import '../widgets/category_chips.dart';
+import '../widgets/hero_banner.dart';
 import '../widgets/brand_strip.dart';
-import '../widgets/offer_strip.dart';
-import '../widgets/promo_cards.dart';
-import '../widgets/trending_picks.dart';
-import '../widgets/brand_spotlight.dart';
-import '../widgets/luxe_section.dart';
-import '../widgets/footer.dart';
+import '../widgets/promo_grid.dart';
 import '../../cart/screens/cart_screen.dart';
 import '../../search/screens/search_screen.dart';
 import '../../product/screens/product_list_screen.dart';
 import '../../wishlist/screens/wishlist_screen.dart';
+import '../../profile/screens/address_list_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -43,7 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final cartCount = context.watch<CartProvider>().count;
     final categories = context.watch<CategoryProvider>().categories;
+    final products = context.watch<ProductProvider>().featuredProducts;
     return Scaffold(
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -53,10 +52,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(builder: (_) => const SearchScreen()),
               ),
-              onWishlistTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const WishlistScreen()),
-              ),
+              onWishlistTap: () {
+                final auth = context.read<AuthProvider>();
+                if (!auth.isLoggedIn) {
+                  Navigator.pushNamed(context, '/login');
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const WishlistScreen()),
+                  );
+                }
+              },
               onCartTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const CartScreen()),
@@ -66,6 +72,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(builder: (_) => const ProfileScreen()),
               ),
+              onAddressTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AddressListScreen(),
+                ),
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -74,8 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     GenderFilterTabs(
                       onTabChanged: (tab) {},
                     ),
-                    const Divider(height: 1, color: AppColors.divider),
-                    CategoryIconsRow(
+                    CategoryChips(
                       categories: categories,
                       onCategoryTap: (cat) => Navigator.push(
                         context,
@@ -84,65 +95,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    BannerCarousel(banners: MockData.banners),
-                    const SizedBox(height: 12),
+                    const HeroBanner(),
                     const BrandStrip(),
-                    const SizedBox(height: 12),
-                    const OfferStrip(),
-                    const SizedBox(height: 12),
-                    PromoCards(
-                      onBrandDayTap: () => Navigator.push(
+                    const PromoGrid(
+                      onBrandDayTap: null,
+                      onStylishStealsTap: null,
+                    ),
+                    ProductGridSection(
+                      title: 'Featured Products',
+                      subtitle: 'Handpicked just for you',
+                      products: products,
+                      onViewAll: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const ProductListScreen(),
-                        ),
-                      ),
-                      onStylishStealsTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ProductListScreen(),
+                          builder: (_) => ProductListScreen(title: 'Featured'),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    const Divider(height: 8, color: AppColors.divider),
-                    TrendingPicks(
-                      items: MockData.trendingPicks,
-                      onItemTap: (item) => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ProductListScreen(),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Divider(height: 8, color: AppColors.divider),
-                    BrandSpotlight(
-                      brands: MockData.brands,
-                      onBrandTap: (brand) => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ProductListScreen(
-                            title: brand['name'],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Divider(height: 8, color: AppColors.divider),
-                    LuxeSection(
-                      items: MockData.luxeItems,
-                      onItemTap: (item) => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ProductListScreen(),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Divider(height: 8, color: AppColors.divider),
-                    const Footer(),
                   ],
                 ),
               ),

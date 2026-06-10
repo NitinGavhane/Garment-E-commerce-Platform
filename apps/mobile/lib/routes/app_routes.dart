@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../features/auth/screens/login_screen.dart';
 import '../features/home/screens/home_screen.dart';
+import '../features/home/screens/now_screen.dart';
+import '../features/home/screens/luxe_screen.dart';
 import '../features/cart/screens/cart_screen.dart';
 import '../features/orders/screens/order_list_screen.dart';
+import '../features/profile/screens/profile_screen.dart';
 import '../features/wishlist/screens/wishlist_screen.dart';
 import '../features/search/screens/search_screen.dart';
 import '../features/product/screens/product_list_screen.dart';
@@ -51,8 +54,8 @@ class _MainShellState extends State<MainShell> {
   final _screens = const [
     HomeScreen(),
     ProductListScreen(),
-    HomeScreen(),
-    HomeScreen(),
+    NowScreen(),
+    LuxeScreen(),
     CartScreen(),
   ];
 
@@ -75,7 +78,7 @@ class _MainShellState extends State<MainShell> {
       bottomNavigationBar: Container(
         height: 60,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: Color(0xFFfff8f7),
           border: Border(
             top: BorderSide(color: Color(0xFFE0E0E0), width: 0.5),
           ),
@@ -83,20 +86,20 @@ class _MainShellState extends State<MainShell> {
         child: Row(
           children: [
             _NavItem(
-              icon: _currentIndex == 0 ? Icons.home : Icons.home_outlined,
+              icon: Icons.home,
               label: 'Home',
               isActive: _currentIndex == 0,
               onTap: () => setState(() => _currentIndex = 0),
             ),
             _NavItem(
-              icon: Icons.monetization_on_outlined,
-              label: 'Under ₹999',
+              icon: Icons.sell_outlined,
+              label: 'Under 999',
               isActive: _currentIndex == 1,
               onTap: () => setState(() => _currentIndex = 1),
             ),
             _NavItem(
-              icon: Icons.flash_on,
-              label: 'NOW',
+              icon: Icons.bolt,
+              label: 'Now',
               isActive: _currentIndex == 2,
               onTap: () => setState(() => _currentIndex = 2),
             ),
@@ -107,7 +110,7 @@ class _MainShellState extends State<MainShell> {
               onTap: () => setState(() => _currentIndex = 3),
             ),
             _NavItem(
-              icon: Icons.shopping_bag_outlined,
+              icon: Icons.shopping_cart_outlined,
               label: 'Bag',
               isActive: _currentIndex == 4,
               badgeCount: cartCount,
@@ -153,8 +156,8 @@ class _NavItem extends StatelessWidget {
                     icon,
                     size: 22,
                     color: isActive
-                        ? const Color(0xFFE8144D)
-                        : const Color(0xFF757575),
+                        ? const Color(0xFFbd003b)
+                        : const Color(0xFF5f5e5e),
                   ),
                   if (badgeCount > 0)
                     Positioned(
@@ -164,7 +167,7 @@ class _NavItem extends StatelessWidget {
                         width: 16,
                         height: 16,
                         decoration: const BoxDecoration(
-                          color: Color(0xFFE8144D),
+                          color: Color(0xFFbd003b),
                           shape: BoxShape.circle,
                         ),
                         alignment: Alignment.center,
@@ -186,10 +189,10 @@ class _NavItem extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 10,
-                  fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                  fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                   color: isActive
-                      ? const Color(0xFFE8144D)
-                      : const Color(0xFF757575),
+                      ? const Color(0xFFbd003b)
+                      : const Color(0xFF5f5e5e),
                 ),
               ),
             ],

@@ -5,234 +5,216 @@ import 'app_colors.dart';
 class AppTextStyles {
   AppTextStyles._();
 
-  static TextStyle get displayLarge => GoogleFonts.poppins(
+  // Poppins - Brand Voice (headings, navigation, labels)
+  static TextStyle get displaySale => GoogleFonts.poppins(
         fontSize: 32,
         fontWeight: FontWeight.w800,
-        color: AppColors.textPrimary,
-        letterSpacing: -0.5,
+        color: AppColors.onSurface,
+        letterSpacing: -0.02,
       );
 
-  static TextStyle get displayMedium => GoogleFonts.poppins(
-        fontSize: 28,
-        fontWeight: FontWeight.w800,
-        color: AppColors.textPrimary,
-        letterSpacing: -0.5,
-      );
-
-  static TextStyle get headline1 => GoogleFonts.poppins(
+  static TextStyle get displaySaleMobile => GoogleFonts.poppins(
         fontSize: 24,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-        letterSpacing: -0.3,
-      );
-
-  static TextStyle get headline2 => GoogleFonts.poppins(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      );
-
-  static TextStyle get headline3 => GoogleFonts.poppins(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      );
-
-  static TextStyle get title => GoogleFonts.poppins(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      );
-
-  static TextStyle get subtitle => GoogleFonts.poppins(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: AppColors.textSecondary,
-      );
-
-  static TextStyle get body => GoogleFonts.poppins(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textPrimary,
-      );
-
-  static TextStyle get bodySmall => GoogleFonts.poppins(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
-      );
-
-  static TextStyle get caption => GoogleFonts.poppins(
-        fontSize: 11,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textHint,
-      );
-
-  static TextStyle get label => GoogleFonts.poppins(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: AppColors.textSecondary,
-      );
-
-  static TextStyle get button => GoogleFonts.poppins(
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-        color: AppColors.white,
-        letterSpacing: 0.3,
-      );
-
-  static TextStyle get buttonOutline => GoogleFonts.poppins(
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-        color: AppColors.primary,
-        letterSpacing: 0.3,
-      );
-
-  static TextStyle get price => GoogleFonts.poppins(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        color: AppColors.primary,
-      );
-
-  static TextStyle get priceSmall => GoogleFonts.poppins(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      );
-
-  static TextStyle get oldPrice => GoogleFonts.poppins(
-        fontSize: 13,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textMuted,
-        decoration: TextDecoration.lineThrough,
-      );
-
-  static TextStyle get badge => GoogleFonts.poppins(
-        fontSize: 10,
-        fontWeight: FontWeight.w700,
-        color: AppColors.white,
-        letterSpacing: 0.5,
-      );
-
-  static TextStyle get saleHeading => GoogleFonts.poppins(
-        fontSize: 30,
         fontWeight: FontWeight.w800,
-        color: AppColors.white,
-        letterSpacing: 1,
+        color: AppColors.onSurface,
       );
 
-  static TextStyle get sectionLabel => GoogleFonts.poppins(
-        fontSize: 15,
+  static TextStyle get headlineSection => GoogleFonts.poppins(
+        fontSize: 16,
         fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      );
-
-  static TextStyle get searchPlaceholder => GoogleFonts.poppins(
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textHint,
+        color: AppColors.onSurface,
       );
 
   static TextStyle get tabLabel => GoogleFonts.poppins(
         fontSize: 13,
         fontWeight: FontWeight.w600,
-        color: AppColors.textSecondary,
-        letterSpacing: 0.5,
+        color: AppColors.onSurfaceVariant,
+        letterSpacing: 0.05,
       );
 
-  static TextStyle get tabLabelActive => GoogleFonts.poppins(
+  static TextStyle get searchText => GoogleFonts.poppins(
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        color: AppColors.onSurface,
+      );
+
+  static TextStyle get labelSm => GoogleFonts.poppins(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onSurface,
+      );
+
+  // Roboto - Workhorse (descriptions, prices, fine print)
+  static TextStyle get bodyMd => GoogleFonts.roboto(
         fontSize: 13,
-        fontWeight: FontWeight.w700,
-        color: AppColors.brandDark,
-        letterSpacing: 0.5,
+        fontWeight: FontWeight.w400,
+        color: AppColors.onSurface,
       );
 
+  static TextStyle get priceCopy => GoogleFonts.roboto(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        color: AppColors.onSurface,
+      );
+
+  // Backward compatibility aliases
+  static TextStyle get displayLarge => displaySale;
+  static TextStyle get displayMedium => displaySaleMobile;
+  static TextStyle get headline1 => GoogleFonts.poppins(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: AppColors.onSurface,
+      );
+  static TextStyle get headline2 => GoogleFonts.poppins(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onSurface,
+      );
+  static TextStyle get headline3 => GoogleFonts.poppins(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onSurface,
+      );
+  static TextStyle get title => GoogleFonts.poppins(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onSurface,
+      );
+  static TextStyle get subtitle => GoogleFonts.poppins(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: AppColors.textSecondary,
+      );
+  static TextStyle get body => GoogleFonts.poppins(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: AppColors.onSurface,
+      );
+  static TextStyle get bodySmall => GoogleFonts.roboto(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textSecondary,
+      );
+  static TextStyle get caption => GoogleFonts.poppins(
+        fontSize: 11,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textMuted,
+      );
+  static TextStyle get label => GoogleFonts.poppins(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        color: AppColors.textSecondary,
+      );
+  static TextStyle get button => GoogleFonts.poppins(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: AppColors.white,
+      );
+  static TextStyle get buttonOutline => GoogleFonts.poppins(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: AppColors.primary,
+      );
+  static TextStyle get price => GoogleFonts.poppins(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: AppColors.primary,
+      );
+  static TextStyle get priceSmall => GoogleFonts.poppins(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onSurface,
+      );
+  static TextStyle get oldPrice => GoogleFonts.roboto(
+        fontSize: 13,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textMuted,
+        decoration: TextDecoration.lineThrough,
+      );
+  static TextStyle get badge => GoogleFonts.poppins(
+        fontSize: 10,
+        fontWeight: FontWeight.w700,
+        color: AppColors.white,
+      );
+  static TextStyle get saleHeading => GoogleFonts.poppins(
+        fontSize: 28,
+        fontWeight: FontWeight.w800,
+        color: AppColors.white,
+      );
+  static TextStyle get sectionLabel => GoogleFonts.poppins(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onSurface,
+      );
+  static TextStyle get searchPlaceholder => GoogleFonts.poppins(
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textHint,
+      );
   static TextStyle get brandName => GoogleFonts.poppins(
         fontSize: 14,
         fontWeight: FontWeight.w700,
         color: AppColors.white,
       );
-
-  static TextStyle get smallBody => GoogleFonts.poppins(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
-      );
-
   static TextStyle get navLabel => GoogleFonts.poppins(
         fontSize: 10,
         fontWeight: FontWeight.w600,
         color: AppColors.textSecondary,
       );
-
   static TextStyle get navLabelActive => GoogleFonts.poppins(
         fontSize: 10,
         fontWeight: FontWeight.w700,
         color: AppColors.primary,
       );
-
   static TextStyle get topBar => GoogleFonts.poppins(
         fontSize: 12,
         fontWeight: FontWeight.w400,
-        color: Color(0xFF555555),
+        color: AppColors.onSurfaceVariant,
       );
-
   static TextStyle get ctaButton => GoogleFonts.poppins(
         fontSize: 13,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
-        letterSpacing: 2,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onSurface,
       );
-
   static TextStyle get sectionHeading => GoogleFonts.poppins(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        color: AppColors.onSurface,
       );
-
   static TextStyle get sectionSubtext => GoogleFonts.poppins(
         fontSize: 13,
         fontWeight: FontWeight.w400,
         color: AppColors.textMuted,
       );
-
   static TextStyle get blogTitle => GoogleFonts.poppins(
         fontSize: 15,
         fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
+        color: AppColors.onSurface,
       );
-
-  static TextStyle get blogAuthor => GoogleFonts.poppins(
+  static TextStyle get blogAuthor => GoogleFonts.roboto(
         fontSize: 12,
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
         color: AppColors.textSecondary,
       );
-
   static TextStyle get footerHeading => GoogleFonts.poppins(
         fontSize: 13,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
-        letterSpacing: 1.5,
+        fontWeight: FontWeight.w600,
+        color: AppColors.onSurface,
       );
-
-  static TextStyle get footerLink => GoogleFonts.poppins(
-        fontSize: 13,
+  static TextStyle get footerLink => GoogleFonts.roboto(
+        fontSize: 12,
         fontWeight: FontWeight.w400,
-        color: Color(0xFF666666),
-        height: 2,
+        color: AppColors.textMuted,
       );
-
   static TextStyle get heroTitle => GoogleFonts.poppins(
-        fontSize: 52,
+        fontSize: 28,
         fontWeight: FontWeight.w300,
-        color: AppColors.textPrimary,
-        letterSpacing: -1,
+        color: AppColors.onSurface,
       );
-
   static TextStyle get navLink => GoogleFonts.poppins(
         fontSize: 14,
         fontWeight: FontWeight.w500,
-        color: Color(0xFF333333),
+        color: AppColors.onSurface,
       );
 }

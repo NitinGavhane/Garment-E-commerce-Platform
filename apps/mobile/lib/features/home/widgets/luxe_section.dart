@@ -18,13 +18,13 @@ class LuxeSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
           child: Text(
             'Garment Luxe',
             style: GoogleFonts.poppins(
-              fontSize: 16,
+              fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: AppColors.brandDark,
+              color: AppColors.nykaaBlack,
             ),
           ),
         ),
@@ -34,13 +34,13 @@ class LuxeSection extends StatelessWidget {
             'Premium designer wear for the style connoisseur',
             style: GoogleFonts.poppins(
               fontSize: 12,
-              color: AppColors.textSecondary,
+              color: AppColors.textMuted,
             ),
           ),
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 190,
+          height: 200,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -51,9 +51,9 @@ class LuxeSection extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onItemTap?.call(item),
                 child: Container(
-                  width: 150,
+                  width: 160,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                     image: DecorationImage(
                       image: NetworkImage(item['imageUrl'] ?? ''),
                       fit: BoxFit.cover,
@@ -62,9 +62,12 @@ class LuxeSection extends StatelessWidget {
                   ),
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(8),
                       gradient: LinearGradient(
-                        colors: [Colors.transparent, AppColors.black.withValues(alpha: 0.7)],
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.7),
+                        ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),

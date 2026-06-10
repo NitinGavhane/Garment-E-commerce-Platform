@@ -48,9 +48,14 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _search(String query) {
-    setState(() {
-      _hasSearched = true;
-      _results = context.read<ProductProvider>().searchProducts(query);
+    if (query.trim().isEmpty) return;
+    setState(() => _hasSearched = true);
+    context.read<ProductProvider>().fetchProducts(search: query).then((_) {
+      if (mounted) {
+        setState(() {
+          _results = context.read<ProductProvider>().products;
+        });
+      }
     });
   }
 

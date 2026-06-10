@@ -19,57 +19,42 @@ class _GenderFilterTabsState extends State<GenderFilterTabs> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.white,
-      height: 40,
+      color: AppColors.surface,
       child: Row(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _tabs.length,
-              itemBuilder: (context, index) {
-                final isActive = _selectedIndex == index;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() => _selectedIndex = index);
-                    widget.onTabChanged?.call(_tabs[index]);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _tabs[index],
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                            color: isActive ? AppColors.brandDark : AppColors.textSecondary,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          height: 3,
-                          width: 20,
-                          decoration: BoxDecoration(
-                            color: isActive ? AppColors.primary : Colors.transparent,
-                            borderRadius: BorderRadius.circular(1.5),
-                          ),
-                        ),
-                      ],
+        children: _tabs.asMap().entries.map((entry) {
+          final i = entry.key;
+          final tab = entry.value;
+          final isActive = _selectedIndex == i;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() => _selectedIndex = i);
+                widget.onTabChanged?.call(tab);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isActive ? AppColors.primary : Colors.transparent,
+                      width: 2,
                     ),
                   ),
-                );
-              },
+                ),
+                child: Text(
+                  tab,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: isActive ? AppColors.primary : AppColors.onSurfaceVariant,
+                    letterSpacing: 0.05,
+                  ),
+                ),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Icon(Icons.grid_view_rounded, size: 20, color: AppColors.textSecondary),
-          ),
-        ],
+          );
+        }).toList(),
       ),
     );
   }

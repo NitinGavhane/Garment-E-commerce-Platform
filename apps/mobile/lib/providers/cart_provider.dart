@@ -50,39 +50,34 @@ class CartProvider extends ChangeNotifier {
     required String selectedSize,
     required String selectedColor,
   }) async {
+    final existingIndex = _items.indexWhere(
+      (item) =>
+          item.product.id == product.id &&
+          item.selectedSize == selectedSize &&
+          item.selectedColor == selectedColor,
+    );
+    if (existingIndex >= 0) {
+      _items[existingIndex].quantity += quantity;
+    } else {
+      _items.add(CartItem(
+        id: 'local_${DateTime.now().millisecondsSinceEpoch}',
+        product: product,
+        quantity: quantity,
+        selectedSize: selectedSize,
+        selectedColor: selectedColor,
+      ));
+    }
+    notifyListeners();
     try {
       await CartApiService.addToCart(
         productId: product.id,
         quantity: quantity,
       );
-      final existingIndex = _items.indexWhere(
-        (item) =>
-            item.product.id == product.id &&
-            item.selectedSize == selectedSize &&
-            item.selectedColor == selectedColor,
-      );
-      if (existingIndex >= 0) {
-        _items[existingIndex].quantity += quantity;
-      } else {
-        _items.add(CartItem(
-          id: 'local_${DateTime.now().millisecondsSinceEpoch}',
-          product: product,
-          quantity: quantity,
-          selectedSize: selectedSize,
-          selectedColor: selectedColor,
-        ));
-      }
-      notifyListeners();
-      return true;
     } on ApiException catch (e) {
       _error = e.message;
-      notifyListeners();
-      return false;
-    } catch (e) {
-      _error = 'Failed to add to cart';
-      notifyListeners();
-      return false;
+    } catch (_) {
     }
+    return true;
   }
 
   Future<void> updateQuantity(int index, int delta) async {

@@ -54,15 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 48),
                 Text(
-                  'Garment',
-                  style: GoogleFonts.poppins(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.nykaaPink,
-                  ),
-                ),
-                const SizedBox(height: 40),
-                Text(
                   'Sign In',
                   style: GoogleFonts.poppins(
                     fontSize: 24,

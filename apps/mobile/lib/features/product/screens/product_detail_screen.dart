@@ -6,6 +6,7 @@ import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../models/product.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/wishlist_provider.dart';
 import '../../checkout/screens/checkout_screen.dart';
@@ -103,6 +104,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ),
                   onPressed: () {
+                    final auth = context.read<AuthProvider>();
+                    if (!auth.isLoggedIn) {
+                      Navigator.pushNamed(context, '/login');
+                      return;
+                    }
                     context.read<WishlistProvider>().toggle(widget.product.id);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -479,6 +485,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             : AppColors.textPrimary,
                       ),
                       onPressed: () {
+                        final auth = context.read<AuthProvider>();
+                        if (!auth.isLoggedIn) {
+                          Navigator.pushNamed(context, '/login');
+                          return;
+                        }
                         wishlist.toggle(widget.product.id);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

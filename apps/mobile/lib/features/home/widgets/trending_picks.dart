@@ -22,14 +22,14 @@ class TrendingPicks extends StatelessWidget {
           child: Text(
             'Trending Summer Picks',
             style: GoogleFonts.poppins(
-              fontSize: 16,
+              fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: AppColors.brandDark,
+              color: AppColors.nykaaBlack,
             ),
           ),
         ),
         SizedBox(
-          height: 190,
+          height: 200,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -40,29 +40,35 @@ class TrendingPicks extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onItemTap?.call(item),
                 child: Container(
-                  width: 130,
+                  width: 140,
                   decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ClipRRect(
                         borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
+                          topLeft: Radius.circular(8),
+                          topRight: Radius.circular(8),
                         ),
                         child: Image.network(
                           item['imageUrl'] ?? '',
-                          height: 130,
+                          height: 140,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
-                            height: 130,
-                            color: AppColors.primaryLight,
-                            child: Icon(Icons.image, color: AppColors.primary, size: 28),
+                            height: 140,
+                            color: AppColors.nykaaLightPink,
+                            child: const Icon(Icons.image, color: AppColors.nykaaPink, size: 32),
                           ),
                         ),
                       ),
@@ -76,7 +82,7 @@ class TrendingPicks extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.brandDark,
+                                color: AppColors.nykaaBlack,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,

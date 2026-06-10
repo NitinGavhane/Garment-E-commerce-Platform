@@ -6,6 +6,7 @@ class Category {
   final IconData icon;
   final Color color;
   final int productCount;
+  final String? imageUrl;
 
   const Category({
     required this.id,
@@ -13,6 +14,7 @@ class Category {
     required this.icon,
     required this.color,
     this.productCount = 0,
+    this.imageUrl,
   });
 }
 
