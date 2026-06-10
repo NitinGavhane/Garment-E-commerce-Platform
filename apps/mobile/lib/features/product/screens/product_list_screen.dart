@@ -14,12 +14,14 @@ class ProductListScreen extends StatefulWidget {
   final Category? category;
   final String? searchQuery;
   final String? title;
+  final double? maxPrice;
 
   const ProductListScreen({
     super.key,
     this.category,
     this.searchQuery,
     this.title,
+    this.maxPrice,
   });
 
   @override
@@ -29,7 +31,7 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   String? _selectedSize;
   String? _selectedColor;
-  double _maxPrice = 5000;
+  late double _maxPrice;
   String _sortBy = 'Popular';
 
   List<Product> get _products {
@@ -75,6 +77,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   void initState() {
     super.initState();
+    _maxPrice = widget.maxPrice ?? 5000;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProductProvider>().fetchProducts(
         category: widget.category?.id,
@@ -230,7 +233,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       setState(() {
                         _selectedSize = null;
                         _selectedColor = null;
-                        _maxPrice = 5000;
+                        _maxPrice = widget.maxPrice ?? 5000;
                       });
                       Navigator.pop(ctx);
                     },

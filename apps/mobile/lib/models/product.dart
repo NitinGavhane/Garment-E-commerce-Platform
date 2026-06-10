@@ -187,6 +187,7 @@ class ApiProduct {
   final int stock;
   final bool featured;
   final bool isActive;
+  final String gender;
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<ApiProductVariant> variants;
@@ -205,6 +206,7 @@ class ApiProduct {
     required this.stock,
     this.featured = false,
     this.isActive = true,
+    this.gender = 'unisex',
     required this.createdAt,
     required this.updatedAt,
     this.variants = const [],
@@ -239,6 +241,7 @@ class ApiProduct {
       stock: json['stock'] as int,
       featured: json['featured'] as bool? ?? false,
       isActive: json['is_active'] as bool? ?? true,
+      gender: json['gender'] as String? ?? 'unisex',
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       variants: (json['variants'] as List<dynamic>?)
@@ -260,6 +263,7 @@ class ApiProductListItem {
   final int stock;
   final bool featured;
   final bool isActive;
+  final String gender;
   final String? categoryId;
   final String? categoryName;
   final String? primaryImage;
@@ -273,6 +277,7 @@ class ApiProductListItem {
     required this.stock,
     this.featured = false,
     this.isActive = true,
+    this.gender = 'unisex',
     this.categoryId,
     this.categoryName,
     this.primaryImage,
@@ -290,6 +295,7 @@ class ApiProductListItem {
       stock: json['stock'] as int,
       featured: json['featured'] as bool? ?? false,
       isActive: json['is_active'] as bool? ?? true,
+      gender: json['gender'] as String? ?? 'unisex',
       categoryId: json['category_id'] as String?,
       categoryName: json['category_name'] as String?,
       primaryImage: json['primary_image'] as String?,

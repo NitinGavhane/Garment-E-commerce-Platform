@@ -51,12 +51,12 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  final _screens = const [
-    HomeScreen(),
-    ProductListScreen(),
-    NowScreen(),
-    LuxeScreen(),
-    CartScreen(),
+  final _screens = [
+    const HomeScreen(),
+    const ProductListScreen(maxPrice: 999.0, title: 'Under 999'),
+    const NowScreen(),
+    const LuxeScreen(),
+    const CartScreen(),
   ];
 
   @override
