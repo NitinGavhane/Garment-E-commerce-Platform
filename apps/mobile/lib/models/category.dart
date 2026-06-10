@@ -7,6 +7,7 @@ class Category {
   final Color color;
   final int productCount;
   final String? imageUrl;
+  final String gender;
 
   const Category({
     required this.id,
@@ -15,6 +16,7 @@ class Category {
     required this.color,
     this.productCount = 0,
     this.imageUrl,
+    this.gender = 'unisex',
   });
 }
 
@@ -24,6 +26,7 @@ class ApiCategory {
   final String slug;
   final String? description;
   final String? imageUrl;
+  final String gender;
   final bool isActive;
   final DateTime createdAt;
 
@@ -33,6 +36,7 @@ class ApiCategory {
     required this.slug,
     this.description,
     this.imageUrl,
+    this.gender = 'unisex',
     this.isActive = true,
     required this.createdAt,
   });
@@ -44,6 +48,7 @@ class ApiCategory {
       slug: json['slug'] as String,
       description: json['description'] as String?,
       imageUrl: json['image_url'] as String?,
+      gender: json['gender'] as String? ?? 'unisex',
       isActive: json['is_active'] as bool? ?? true,
       createdAt: DateTime.parse(json['created_at'] as String),
     );

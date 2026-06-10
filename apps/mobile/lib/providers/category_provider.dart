@@ -47,15 +47,6 @@ class CategoryProvider extends ChangeNotifier {
   String? get error => _error;
   String get selectedGender => _selectedGender;
 
-  static const _genderMap = {
-    'Men': {'MEN'},
-    'Women': {'WOMEN'},
-    'Kids': {'KIDS'},
-    'Footwear': {'MEN', 'WOMEN', 'KIDS'},
-    'Kurtas': {'MEN', 'WOMEN', 'KIDS'},
-    'Shirts': {'MEN', 'WOMEN', 'KIDS'},
-  };
-
   void setGender(String gender) {
     _selectedGender = gender;
     notifyListeners();
@@ -64,8 +55,8 @@ class CategoryProvider extends ChangeNotifier {
   List<models.Category> get filteredCategories {
     if (_selectedGender == 'ALL') return _categories;
     return _categories.where((c) {
-      final genders = _genderMap[c.name];
-      return genders != null && genders.contains(_selectedGender);
+      if (c.gender == 'unisex') return true;
+      return c.gender.toUpperCase() == _selectedGender;
     }).toList();
   }
 
@@ -84,6 +75,7 @@ class CategoryProvider extends ChangeNotifier {
           icon: _categoryIcons[idx],
           color: _categoryColors[idx],
           imageUrl: apiCat.imageUrl,
+          gender: apiCat.gender,
         );
       }).toList();
       _error = null;
