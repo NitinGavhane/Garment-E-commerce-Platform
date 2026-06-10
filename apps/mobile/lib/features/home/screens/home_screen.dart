@@ -39,7 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final cartCount = context.watch<CartProvider>().count;
-    final categories = context.watch<CategoryProvider>().categories;
+    final categoryProvider = context.watch<CategoryProvider>();
+    final categories = categoryProvider.filteredCategories;
     final products = context.watch<ProductProvider>().featuredProducts;
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -84,7 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: [
                     GenderFilterTabs(
-                      onTabChanged: (tab) {},
+                      selectedGender: categoryProvider.selectedGender,
+                      onTabChanged: (tab) =>
+                          context.read<CategoryProvider>().setGender(tab),
                     ),
                     CategoryChips(
                       categories: categories,

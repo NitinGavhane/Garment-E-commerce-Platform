@@ -2,35 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 
-class GenderFilterTabs extends StatefulWidget {
+class GenderFilterTabs extends StatelessWidget {
+  final String selectedGender;
   final ValueChanged<String>? onTabChanged;
 
-  const GenderFilterTabs({super.key, this.onTabChanged});
+  const GenderFilterTabs({
+    super.key,
+    this.selectedGender = 'ALL',
+    this.onTabChanged,
+  });
 
-  @override
-  State<GenderFilterTabs> createState() => _GenderFilterTabsState();
-}
-
-class _GenderFilterTabsState extends State<GenderFilterTabs> {
-  int _selectedIndex = 0;
-
-  final _tabs = ['ALL', 'MEN', 'WOMEN', 'KIDS'];
+  static const _tabs = ['ALL', 'MEN', 'WOMEN', 'KIDS'];
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.surface,
       child: Row(
-        children: _tabs.asMap().entries.map((entry) {
-          final i = entry.key;
-          final tab = entry.value;
-          final isActive = _selectedIndex == i;
+        children: _tabs.map((tab) {
+          final isActive = selectedGender == tab;
           return Expanded(
             child: GestureDetector(
-              onTap: () {
-                setState(() => _selectedIndex = i);
-                widget.onTabChanged?.call(tab);
-              },
+              onTap: () => onTabChanged?.call(tab),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(

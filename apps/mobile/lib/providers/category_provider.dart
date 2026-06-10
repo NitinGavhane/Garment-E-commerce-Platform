@@ -40,10 +40,34 @@ class CategoryProvider extends ChangeNotifier {
   List<models.Category> _categories = [];
   bool _isLoading = false;
   String? _error;
+  String _selectedGender = 'ALL';
 
   List<models.Category> get categories => _categories;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  String get selectedGender => _selectedGender;
+
+  static const _genderMap = {
+    'Men': {'MEN'},
+    'Women': {'WOMEN'},
+    'Kids': {'KIDS'},
+    'Footwear': {'MEN', 'WOMEN', 'KIDS'},
+    'Kurtas': {'MEN', 'WOMEN', 'KIDS'},
+    'Shirts': {'MEN', 'WOMEN', 'KIDS'},
+  };
+
+  void setGender(String gender) {
+    _selectedGender = gender;
+    notifyListeners();
+  }
+
+  List<models.Category> get filteredCategories {
+    if (_selectedGender == 'ALL') return _categories;
+    return _categories.where((c) {
+      final genders = _genderMap[c.name];
+      return genders != null && genders.contains(_selectedGender);
+    }).toList();
+  }
 
   Future<void> fetchCategories() async {
     _isLoading = true;
