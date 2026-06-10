@@ -24,29 +24,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showCountryPicker() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.all(AppDimensions.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Select Shipping Country', style: AppTextStyles.title),
-            const SizedBox(height: AppDimensions.md),
-            ..._countries.map((c) => RadioListTile<String>(
-                  value: c,
-                  groupValue: _shippingCountry,
-                  onChanged: (v) {
-                    setState(() => _shippingCountry = v!);
-                    Navigator.pop(ctx);
-                  },
-                  title: Text(c, style: AppTextStyles.body),
-                  activeColor: AppColors.primary,
-                  contentPadding: EdgeInsets.zero,
-                )),
-          ],
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.8,
+        expand: false,
+        builder: (_, scrollController) => Padding(
+          padding: const EdgeInsets.all(AppDimensions.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Select Shipping Country', style: AppTextStyles.title),
+              const SizedBox(height: AppDimensions.md),
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  children: _countries.map((c) => RadioListTile<String>(
+                        value: c,
+                        groupValue: _shippingCountry,
+                        onChanged: (v) {
+                          setState(() => _shippingCountry = v!);
+                          Navigator.pop(ctx);
+                        },
+                        title: Text(c, style: AppTextStyles.body),
+                        activeColor: AppColors.primary,
+                        contentPadding: EdgeInsets.zero,
+                      )).toList(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

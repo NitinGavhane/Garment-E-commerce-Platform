@@ -33,7 +33,7 @@ class AppButton extends StatelessWidget {
     final foregroundColor = textColor ?? (isOutline ? buttonColor : AppColors.white);
 
     Widget child = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
